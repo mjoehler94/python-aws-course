@@ -30,12 +30,12 @@ function run {
 function run-mock {
     set +e
 
-    # Start moto.server in the background on localhost:5000
-    python -m moto.server -p 5000 &
+    # Start moto.server in the background on localhost:3000
+    python -m moto.server -p 3000 &
     MOTO_PID=$!
 
     # point the AWS CLI and boto3 to the mocked AWS server using mocked credentials
-    export AWS_ENDPOINT_URL="http://localhost:5000"
+    export AWS_ENDPOINT_URL="http://localhost:3000"
     export AWS_SECRET_ACCESS_KEY="mock"
     export AWS_ACCESS_KEY_ID="mock"
     export S3_BUCKET_NAME="some-bucket"
