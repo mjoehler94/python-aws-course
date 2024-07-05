@@ -49,7 +49,7 @@ def test_mixed_page_sizes(mocked_aws):  # noqa: R701 - too complex
     """Assert that pagination works correctly for pages of differing sizes."""
     # Upload 5 objects
     s3_client = boto3.client("s3")
-    for i in range(1, 6):
+    for i in [1, 2, 3, 4, 5]:
         s3_client.put_object(Bucket=TEST_BUCKET_NAME, Key=f"file{i}.txt", Body=f"content {i}")
 
     # Paginate with mixed page sizes

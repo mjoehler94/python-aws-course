@@ -20,11 +20,11 @@ function install {
     python -m pip install --editable "$THIS_DIR/[dev]"
 }
 
-# use uvicorn to run fast api app with hot reloading
 function run {
-    AWS_PROFILE=matt-aws uvicorn files_api.main:APP --reload
+    AWS_PROFILE=cloud-course \
+    S3_BUCKET_NAME="some-bucket" \
+        uvicorn 'files_api.main:create_app' --reload
 }
-
 
 # start the FastAPI app, pointed at a mocked aws endpoint
 function run-mock {
@@ -38,23 +38,20 @@ function run-mock {
     export AWS_ENDPOINT_URL="http://localhost:5000"
     export AWS_SECRET_ACCESS_KEY="mock"
     export AWS_ACCESS_KEY_ID="mock"
+    export S3_BUCKET_NAME="some-bucket"
 
     # create a bucket called "some-bucket" using the mocked aws server
-    echo "TODO: consider change name of some-bucket"
-    aws s3 mb s3://some-bucket
-    aws s3 mb s3://python-course-matt-aws--test-bucket-6-19-24
-    echo "made buckets python-course-matt-aws--test-bucket-6-19-24 and some bucket"
+    aws s3 mb "s3://$S3_BUCKET_NAME"
 
     # Trap EXIT signal to kill the moto.server process when uvicorn stops
     trap 'kill $MOTO_PID' EXIT
 
     # Set AWS endpoint URL and start FastAPI app with uvicorn in the foreground
-    uvicorn src.files_api.main:APP --reload
+    uvicorn files_api.main:create_app --reload
 
     # Wait for the moto.server process to finish (this is optional if you want to keep it running)
     wait $MOTO_PID
 }
-
 # run linting, formatting, and other static code quality tools
 function lint {
     pre-commit run --all-files
@@ -82,11 +79,7 @@ function test:ci {
 # (example) ./run.sh test tests/test_states_info.py::test__slow_add
 function run-tests {
     PYTEST_EXIT_STATUS=0
-
-    # clean the test-reports dir
-    rm -rf "$THIS_DIR/test-reports" || mkdir "$THIS_DIR/test-reports"
-
-    # execute the tests, calculate coverage, and generate coverage reports in the test-reports dir
+    rm -rf "$THIS_DIR/test-reports" || true
     python -m pytest ${@:-"$THIS_DIR/tests/"} \
         --cov "${COVERAGE_DIR:-$THIS_DIR/src}" \
         --cov-report html \

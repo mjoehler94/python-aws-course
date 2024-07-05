@@ -3,13 +3,13 @@
 ############################
 
 [project]
-name = "python-aws-course"
+name = "cloud-course-project"
 description = "My package description"
-authors = [{ name = "Matt Oehler", email = "some-email@gmail.com" }]
+authors = [{ name = "<your name>", email = "some-email@gmail.com" }]
 readme = "README.md"
 requires-python = ">=3.7"
 license = { text = "MIT" }
-dependencies = ["boto3", "fastapi"]
+dependencies = ["boto3", "fastapi", "pydantic-settings"]
 classifiers = ["Programming Language :: Python :: 3"]
 keywords = ["one", "two"]
 
@@ -23,9 +23,10 @@ version = { file = "version.txt" }
 # optional dependencies can be installed with square brackets, e.g. `pip install my-package[test,static-code-qa]`
 [project.optional-dependencies]
 api = ["uvicorn", "moto[server]"]
+stubs = ["boto3-stubs[s3]"]
 notebooks = ["jupyterlab", "ipykernel", "rich"]
-release = ["build", "twine"]
 test = ["pytest", "pytest-cov", "moto[s3]"]
+release = ["build", "twine"]
 static-code-qa = [
     "pre-commit",
     "pylint",
@@ -36,20 +37,18 @@ static-code-qa = [
     "Flake8-pyproject",
     "radon",
 ]
-stubs = ["boto3-stubs[s3]"]
 # Installing dev depenendencies in your virtual env makes it so that during development VS Code can
 # - surface linting errors
 # - automatically apply formatting
 # - show enhanced autocompletion for stubs libraries
 # See .vscode/settings.json to see how VS Code is configured to use these tools
-dev = ["python-aws-course[test,release,static-code-qa, stubs, notebooks, api]"]
+dev = ["cloud-course-project[test,release,static-code-qa,stubs,notebooks,api]"]
 
 [build-system]
 # Minimum requirements for the build system to execute.
 requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
-# include more than only .py files in the distribution package (wheel)
 [tool.setuptools.package-data]
 files_api = ["*.json"]
 
@@ -63,7 +62,6 @@ markers = ["slow: marks tests as slow (deselect with '-m \"not slow\"')"]
 
 [tool.black]
 line-length = 119
-# regular expression ignoring multiple patterns separated by '|' and newlines
 exclude = '''
 /(
     \.venv

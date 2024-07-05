@@ -1,1 +1,1 @@
-"""Automated tests for python-aws-course."""
+"""Automated tests for cloud-course-project."""
